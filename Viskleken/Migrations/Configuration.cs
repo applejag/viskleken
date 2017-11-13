@@ -18,7 +18,7 @@ namespace Viskleken.Migrations
             context.Languages.AddOrUpdate(p => p.Id, new Language
             {
                 Id = 1,
-                Name = "1. Amhariska, javanesiska, gaeliska, kanaresiska, urdu"
+                Name = "1. Latin, javanesiska, gaeliska, kanaresiska, urdu"
             });
 
             context.Languages.AddOrUpdate(p => p.Id, new Language
