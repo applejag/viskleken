@@ -4,16 +4,16 @@ namespace Viskleken.Migrations
     using System.Data.Entity;
     using System.Data.Entity.Migrations;
     using System.Linq;
-    using Viskleken.Models;
+    using Models;
 
-    internal sealed class Configuration : DbMigrationsConfiguration<Viskleken.Models.VisklekenContext>
+    internal sealed class Configuration : DbMigrationsConfiguration<VisklekenContext>
     {
         public Configuration()
         {
             AutomaticMigrationsEnabled = false;
         }
 
-        protected override void Seed(Viskleken.Models.VisklekenContext context)
+        protected override void Seed(VisklekenContext context)
         {
             context.Languages.AddOrUpdate(p => p.Id, new Language
             {
