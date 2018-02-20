@@ -1,24 +1,5 @@
-﻿@model Viskleken.Viewmodels.LanguageSelectorVM
-
-@functions{
-	static readonly List<string> exampleLangList = new List<string>
-	{
-		"Afrikaans","Albanian","Amharic","Arabic","Armenian","Azeerbaijani","Basque",
-		"Belarusian","Bengali","Bosnian","Bulgarian","Catalan","Cebuano","Chinese (Simplified)",
-		"Chinese (Traditional)","Corsican","Croatian","Czech","Danish","Dutch","English",
-		"Esperanto","Estonian","Finnish","French","Frisian","Galician","Georgian","German",
-		"Greek","Gujarati","Haitian Creole","Hausa","Hawaiian","Hebrew","Hindi","Hmong",
-		"Hungarian","Icelandic","Igbo","Indonesian","Irish","Italian","Japanese","Javanese",
-		"Kannada","Kazakh","Khmer","Korean","Kurdish","Kyrgyz","Lao","Latin","Latvian","Lithuanian",
-		"Luxembourgish","Macedonian","Malagasy","Malay","Malayalam","Maltese","Maori","Marathi",
-		"Mongolian","Myanmar (Burmese)","Nepali","Norwegian","Nyanja (Chichewa)","Pashto","Persian",
-		"Polish","Portuguese (Portugal, Brazil)","Punjabi","Romanian","Russian","Samoan",
-		"Scots Gaelic","Serbian","Sesotho","Shona","Sindhi","Sinhala (Sinhalese)","Slovak",
-		"Slovenian","Somali","Spanish","Sundanese","Swahili","Swedish","Tagalog (Filipino)","Tajik",
-		"Tamil","Telugu","Thai","Turkish","Ukrainian","Urdu","Uzbek","Vietnamese","Welsh",
-		"Xhosa","Yiddish","Yoruba","Zulu",
-	};
-}
+﻿@using Viskleken.Models
+@model Viskleken.Viewmodels.LanguageSelectorVM
 
 @section scripts
 {
@@ -26,11 +7,12 @@
 		$(function() {
 			$('[data-toggle="popover"]').popover();
 
-			@foreach (var selectListItem in Model.Language)
+			@foreach (string selectListItem in Model.SelectedLanguages)
 			{
-				if (!string.IsNullOrWhiteSpace(selectListItem.Value))
+				Language language = Model.AllLanguages.FirstOrDefault(e => e.Code == selectListItem);
+				if (language != null)
 				{
-					@Html.Raw($"addLanguage({selectListItem.Value});")
+					@Html.Raw($"addLanguage('{language.Name}', '{language.Code}');")
 				}
 			}
 		});
@@ -39,7 +21,7 @@
 			$('<div class="input-group" style="margin-bottom: 0.5em">' +
 				'<input class="form-control" type="text" value="'+lang+'" readonly="readonly" />' +
 				'<button class="input-group-addon btn btn-danger" onclick="$(this).parent().remove()" type="button">Ta bort</button>' +
-				'<input type="hidden" name="@nameof(Model.Language)" value="' + (lang || '') + '">' +
+				'<input type="hidden" name="@nameof(Model.SelectedLanguages)" value="' + (code || '') + '">' +
 			'</div>').appendTo($('#selectedLanguages'));
 		}
 	</script>
@@ -73,23 +55,14 @@
 				</div>
 			</div>
 
-
-			@*<div class="form-group">
-				@Html.LabelFor(model => model.Language, htmlAttributes: new { @class = "control-label col-md-2" })
-				<div class="col col-md-10">
-					@Html.DropDownListFor(model => model.SelectedLanguageId, new SelectList(@Model.Language, "Value", "Text", Model.SelectedLanguageId), "Inget valt", htmlAttributes: new { @class = "form-control" })
-					@Html.ValidationMessageFor(model => model.Language, null, new { @class = "text-danger" })
-				</div>
-			</div>*@
-			
 			<div class="form-group">
-				@Html.LabelFor(model => model.Language, htmlAttributes: new { @class = "control-label col-md-2"})
+				@Html.LabelFor(model => model.SelectedLanguages, htmlAttributes: new { @class = "control-label col-md-2"})
 				<div class="col col-md-10">
 					<div id="selectedLanguages"></div>
 					<a href="#" class="btn btn-success" data-toggle="popover" data-placement="bottom"
 					   title="Lägg till språk" data-html="true" data-trigger="focus"
-					   data-content="@Html.Partial("_LanguageTablePartial", exampleLangList).ToHtmlString()">Lägg till språk</a>
-					@Html.ValidationMessageFor(model => model.Language, "", new { @class = "text-danger" })
+					   data-content="@Html.Partial("_LanguageTablePartial", Model.AllLanguages).ToHtmlString()">Lägg till språk</a>
+					@Html.ValidationMessageFor(model => model.SelectedLanguages, "", new { @class = "text-danger" })
 				</div>
 			</div>
 

@@ -1,4 +1,5 @@
-﻿@model List<string>
+﻿@using Viskleken.Models
+@model List<Language>
 @{
 	const int numOfColumns = 8;
 	int langPerColumn = (int)Math.Ceiling(Model.Count / (double)numOfColumns);
@@ -17,8 +18,8 @@
 					<td>
 						@for (int i = start; i < stop; i++)
 						{
-							string lang = Model[i];
-							<div><button class="label label-default" type="button" onclick="addLanguage('@lang')">@lang</button></div>
+							Language lang = Model[i];
+							<div><button class="label label-default" type="button" onclick="addLanguage('@lang.Name', '@lang.Code')">@lang.Name</button></div>
 						}
 					</td>
 				}

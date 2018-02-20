@@ -4,6 +4,7 @@ using System.Data;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using Viskleken.Models;
@@ -13,47 +14,19 @@ namespace Viskleken.Controllers
 {
     public class LanguagesController : Controller
     {
-        private VisklekenContext db = new VisklekenContext();
-
-        // GET: Languages
-        public ActionResult Index()
-        {
-            return View(db.Languages.ToList());
-        }
-
-        // GET: Languages/Details/5
-        public ActionResult Details(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Language language = db.Languages.Find(id);
-            if (language == null)
-            {
-                return HttpNotFound();
-            }
-            return View(language);
-        }
-
+        private readonly VisklekenContext db = new VisklekenContext();
+		
         // GET: Languages/Select
-        public ActionResult SelectLanguage()
+        public async Task<ActionResult> SelectLanguage()
         {
-            LanguageSelectorVM languageSelectorVM = new LanguageSelectorVM();
+	        var languageSelectorVM = new LanguageSelectorVM
+	        {
+		        Heading = "Viskleken",
+		        StageInProcess = 1,
+				AllLanguages = await db.LanguageCodes.ToListAsync(),
+			};
 
-            List<SelectListItem> languages = new List<SelectListItem>();
-
-            languages = db.Languages.ToList().ConvertAll(l => new SelectListItem
-            {
-                Value = $"{l.Id}",
-                Text = l.Name
-            });
-            languageSelectorVM.Language = new SelectList(languages, "Value", "Text");
-
-            languageSelectorVM.Heading = "Viskleken";
-            languageSelectorVM.StageInProcess = 1;
-
-            return View(languageSelectorVM);
+	        return View(languageSelectorVM);
         }
 
         // POST: Languages/Select
@@ -61,29 +34,13 @@ namespace Viskleken.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult SelectLanguage(LanguageSelectorVM preLanguageSelectorVM)
+        public async Task<ActionResult> SelectLanguage(LanguageSelectorVM model)
         {
-            LanguageSelectorVM languageSelectorVM = new LanguageSelectorVM();
-
-            List<SelectListItem> languages = new List<SelectListItem>();
-
-            languages = db.Languages.ToList().ConvertAll(l => new SelectListItem
-            {
-                Value = $"{l.Id}",
-                Text = l.Name
-            });
-            languageSelectorVM.Language = new SelectList(languages, "Value", "Text");
-            languageSelectorVM.SelectedLanguageId = preLanguageSelectorVM.SelectedLanguageId;
-            languageSelectorVM.Heading = "Viskleken";
-
-            if (preLanguageSelectorVM.SelectedLanguageId == null)
-            {
-                ModelState.AddModelError("Language", "Fältet Språk krävs.");
-            }
-
-            if (preLanguageSelectorVM.Phrase != null && preLanguageSelectorVM.SelectedLanguageId != null && ModelState.IsValid)
+	        model.AllLanguages = await db.LanguageCodes.ToListAsync();
+			
+			if (ModelState.IsValid)
             {   
-                languageSelectorVM.StageInProcess = 2;
+                model.StageInProcess = 2;
 
                 //string builder = "";
                 //System.IO.File.WriteAllText("C:\\Users\\paulh\\OneDrive\\Documents\\Bitoreq AB\\APL\\Viskleken\\File.txt", builder);
@@ -92,76 +49,19 @@ namespace Viskleken.Controllers
                 System.IO.Directory.CreateDirectory(path);
                 System.IO.File.WriteAllText(path + "\\File.txt", "");
 
-                return View(languageSelectorVM);
+                return View(model);
             }
 
-            preLanguageSelectorVM.StageInProcess = 1;
+            model.StageInProcess = 1;
 
-            return View(languageSelectorVM);
-        }
-
-        // GET: Languages/Edit/5
-        public ActionResult Edit(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Language language = db.Languages.Find(id);
-            if (language == null)
-            {
-                return HttpNotFound();
-            }
-            return View(language);
-        }
-
-        // POST: Languages/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,Name")] Language language)
-        {
-            if (ModelState.IsValid)
-            {
-                db.Entry(language).State = EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("Index");
-            }
-            return View(language);
-        }
-
-        // GET: Languages/Delete/5
-        public ActionResult Delete(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Language language = db.Languages.Find(id);
-            if (language == null)
-            {
-                return HttpNotFound();
-            }
-            return View(language);
-        }
-
-        // POST: Languages/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
-        {
-            Language language = db.Languages.Find(id);
-            db.Languages.Remove(language);
-            db.SaveChanges();
-            return RedirectToAction("Index");
+            return View(model);
         }
 
         protected override void Dispose(bool disposing)
         {
             if (disposing)
             {
-                db.Dispose();
+                db?.Dispose();
             }
             base.Dispose(disposing);
         }

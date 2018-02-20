@@ -19,6 +19,6 @@ namespace Viskleken.Models
         {
         }
 
-        public DbSet<Language> Languages { get; set; }
+        public DbSet<Language> LanguageCodes { get; set; }
     }
 }

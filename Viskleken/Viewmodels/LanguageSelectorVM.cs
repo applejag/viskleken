@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using Viskleken.Models;
 
 namespace Viskleken.Viewmodels
 {
@@ -14,16 +15,18 @@ namespace Viskleken.Viewmodels
         [Display(Name="E-post")]
         public string Email { get; set; }
 
-        [Required]
         [Display(Name = "Fras")]
+        [Required(ErrorMessage = "Var god ange en fras.")]
         public string Phrase { get; set; }
 
-        public int? SelectedLanguageId { get; set; }
-
         [Display(Name = "Språk")]
-        public IEnumerable<SelectListItem> Language { get; set; }
+		[Required(ErrorMessage = "Var god ange minst ett språk.")]
+		[MinLength(1, ErrorMessage = "Var god ange minst ett språk.")]
+        public IEnumerable<string> SelectedLanguages { get; set; } = new List<string>();
+		
+	    public List<Language> AllLanguages { get; set; }
 
-        public string StartMessage { get; set; }
+		public string StartMessage { get; set; }
 
         public int StageInProcess { get; set; }
 

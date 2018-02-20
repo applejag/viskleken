@@ -156,6 +156,10 @@
     <Compile Include="Migrations\201710181035592_initial.Designer.cs">
       <DependentUpon>201710181035592_initial.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201802201605359_split-into-languages.cs" />
+    <Compile Include="Migrations\201802201605359_split-into-languages.Designer.cs">
+      <DependentUpon>201802201605359_split-into-languages.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Language.cs" />
     <Compile Include="Models\VisklekenContext.cs" />
@@ -223,6 +227,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201710181035592_initial.resx">
       <DependentUpon>201710181035592_initial.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201802201605359_split-into-languages.resx">
+      <DependentUpon>201802201605359_split-into-languages.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
