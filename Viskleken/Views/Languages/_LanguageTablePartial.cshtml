@@ -1,0 +1,28 @@
+﻿@model List<string>
+@{
+	const int numOfColumns = 8;
+	int langPerColumn = (int)Math.Ceiling(Model.Count / (double)numOfColumns);
+}
+
+<table class="table">
+	<tbody>
+		<tr>
+			@for (int col = 0; col < numOfColumns; col++)
+			{
+				int start = langPerColumn * col;
+				int stop = Math.Min(langPerColumn * (col + 1), Model.Count);
+
+				if (start < stop)
+				{
+					<td>
+						@for (int i = start; i < stop; i++)
+						{
+							string lang = Model[i];
+							<div><button class="label label-default" type="button" onclick="addLanguage('@lang')">@lang</button></div>
+						}
+					</td>
+				}
+			}
+		</tr>
+	</tbody>
+</table>

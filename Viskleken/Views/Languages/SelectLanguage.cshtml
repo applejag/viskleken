@@ -1,104 +1,127 @@
 ﻿@model Viskleken.Viewmodels.LanguageSelectorVM
 
+@functions{
+	static readonly List<string> exampleLangList = new List<string>
+	{
+		"Afrikaans","Albanian","Amharic","Arabic","Armenian","Azeerbaijani","Basque",
+		"Belarusian","Bengali","Bosnian","Bulgarian","Catalan","Cebuano","Chinese (Simplified)",
+		"Chinese (Traditional)","Corsican","Croatian","Czech","Danish","Dutch","English",
+		"Esperanto","Estonian","Finnish","French","Frisian","Galician","Georgian","German",
+		"Greek","Gujarati","Haitian Creole","Hausa","Hawaiian","Hebrew","Hindi","Hmong",
+		"Hungarian","Icelandic","Igbo","Indonesian","Irish","Italian","Japanese","Javanese",
+		"Kannada","Kazakh","Khmer","Korean","Kurdish","Kyrgyz","Lao","Latin","Latvian","Lithuanian",
+		"Luxembourgish","Macedonian","Malagasy","Malay","Malayalam","Maltese","Maori","Marathi",
+		"Mongolian","Myanmar (Burmese)","Nepali","Norwegian","Nyanja (Chichewa)","Pashto","Persian",
+		"Polish","Portuguese (Portugal, Brazil)","Punjabi","Romanian","Russian","Samoan",
+		"Scots Gaelic","Serbian","Sesotho","Shona","Sindhi","Sinhala (Sinhalese)","Slovak",
+		"Slovenian","Somali","Spanish","Sundanese","Swahili","Swedish","Tagalog (Filipino)","Tajik",
+		"Tamil","Telugu","Thai","Turkish","Ukrainian","Urdu","Uzbek","Vietnamese","Welsh",
+		"Xhosa","Yiddish","Yoruba","Zulu",
+	};
+}
+
+@section scripts
+{
+	<script type="text/javascript">
+		$(function() {
+			$('[data-toggle="popover"]').popover();
+
+			@foreach (var selectListItem in Model.Language)
+			{
+				if (!string.IsNullOrWhiteSpace(selectListItem.Value))
+				{
+					@Html.Raw($"addLanguage({selectListItem.Value});")
+				}
+			}
+		});
+
+		function addLanguage(lang, code) {
+			$('<div class="input-group" style="margin-bottom: 0.5em">' +
+				'<input class="form-control" type="text" value="'+lang+'" readonly="readonly" />' +
+				'<button class="input-group-addon btn btn-danger" onclick="$(this).parent().remove()" type="button">Ta bort</button>' +
+				'<input type="hidden" name="@nameof(Model.Language)" value="' + (lang || '') + '">' +
+			'</div>').appendTo($('#selectedLanguages'));
+		}
+	</script>
+}
+
 @using (Html.BeginForm())
 {
-    @Html.AntiForgeryToken()
+	@Html.AntiForgeryToken()
 
-    <div class="row">
-        <p class="col col-md-2"></p>
-        <p class="page-header col col-md-5">@Model.Heading</p>
-    </div>
+	<div class="row">
+		<p class="col col-md-2"></p>
+		<p class="page-header col col-md-5">@Model.Heading</p>
+	</div>
 
-    <div class="row">
-        <div class="form-horizontal">
-            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-            <div class="form-group">
-                @Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "control-label col-md-2" })
-                <div class="col-md-10">
-                    @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control", @type = "email" } })
-                    @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
-                </div>
-            </div>
+	<div class="row">
+		<div class="form-horizontal">
+			@Html.ValidationSummary(true, "", new { @class = "text-danger" })
+			<div class="form-group">
+				@Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "control-label col-md-2" })
+				<div class="col-md-10">
+					@Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control", @type = "email" } })
+					@Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+				</div>
+			</div>
 
-            <div class="form-group">
-                @Html.LabelFor(model => model.Phrase, htmlAttributes: new { @class = "control-label col-md-2" })
-                <div class="col-md-10">
-                    @Html.EditorFor(model => model.Phrase, new { htmlAttributes = new { @class = "form-control" } })
-                    @Html.ValidationMessageFor(model => model.Phrase, "", new { @class = "text-danger" })
-                </div>
-            </div>
+			<div class="form-group">
+				@Html.LabelFor(model => model.Phrase, htmlAttributes: new { @class = "control-label col-md-2" })
+				<div class="col-md-10">
+					@Html.EditorFor(model => model.Phrase, new { htmlAttributes = new { @class = "form-control" } })
+					@Html.ValidationMessageFor(model => model.Phrase, "", new { @class = "text-danger" })
+				</div>
+			</div>
 
-            <div class="form-group">
-                @Html.LabelFor(model => model.Language, htmlAttributes: new { @class = "control-label col-md-2" })
-                <div class="col col-md-10">
-                    @Html.DropDownListFor(model => model.SelectedLanguageId, new SelectList(@Model.Language, "Value", "Text", Model.SelectedLanguageId), "Inget valt", htmlAttributes: new { @class = "form-control" })
-                    @Html.ValidationMessageFor(model => model.Language, null, new { @class = "text-danger" })
-                </div>
-            </div>
-            @if (Model.StageInProcess == 2)
-                {
-                <div class="row">
-                    <div class="col col-md-offset-2 col-md-10 reset">
-                        <div>@Html.ActionLink("Nollställ", "SelectLanguage", null, new { @class = "btn btn-danger" })</div>
-                    </div>
-                    <p class="col col-md-offset-2 col-md-10" id="start-message">@Model.StartMessage</p>
-                </div>
-            }
-            else
-            {
-                <div class="row">
-                    <div class="form-group">
-                        <div class="col col-md-offset-2 col-md-6">
-                            <input type="submit" value="Viska!" class="btn btn-default" id="whisper-btn" />
-                        </div>
-                    </div>
-                </div>
-            }
-        </div>
 
-        <div class="row">
-                            <label class="col col-md-2" id="result-label">Resultat </label>
-            <div class="col col-md-10">
-                <span id="result" class="form-control"></span>
+			@*<div class="form-group">
+				@Html.LabelFor(model => model.Language, htmlAttributes: new { @class = "control-label col-md-2" })
+				<div class="col col-md-10">
+					@Html.DropDownListFor(model => model.SelectedLanguageId, new SelectList(@Model.Language, "Value", "Text", Model.SelectedLanguageId), "Inget valt", htmlAttributes: new { @class = "form-control" })
+					@Html.ValidationMessageFor(model => model.Language, null, new { @class = "text-danger" })
+				</div>
+			</div>*@
+			
+			<div class="form-group">
+				@Html.LabelFor(model => model.Language, htmlAttributes: new { @class = "control-label col-md-2"})
+				<div class="col col-md-10">
+					<div id="selectedLanguages"></div>
+					<a href="#" class="btn btn-success" data-toggle="popover" data-placement="bottom"
+					   title="Lägg till språk" data-html="true" data-trigger="focus"
+					   data-content="@Html.Partial("_LanguageTablePartial", exampleLangList).ToHtmlString()">Lägg till språk</a>
+					@Html.ValidationMessageFor(model => model.Language, "", new { @class = "text-danger" })
+				</div>
+			</div>
 
-            </div>
-        </div>
+			@if (Model.StageInProcess == 2)
+			{
+				<div class="row">
+					<div class="col col-md-offset-2 col-md-10 reset">
+						<div>@Html.ActionLink("Nollställ", "SelectLanguage", null, new { @class = "btn btn-danger" })</div>
+					</div>
+					<p class="col col-md-offset-2 col-md-10" id="start-message">@Model.StartMessage</p>
+				</div>
+			}
+			else
+			{
+				<div class="row">
+					<div class="form-group">
+						<div class="col col-md-offset-2 col-md-6">
+							<input type="submit" value="Viska!" class="btn btn-success" id="whisper-btn" />
+						</div>
+					</div>
+				</div>
+			}
+		</div>
 
-    @*ONLY NEEDED FOR PROGRESS BAR*@
-        @*<div class="row">
-            <div class="col col-md-offset-2 col-md-10">
-                <div class="progress">
-                    <div class="progress-bar progress-bar-striped" role="progressbar" id="my-progress-bar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
-                </div>
-            </div>
-        </div>
+		<div class="row">
+			<label class="col col-md-2" id="result-label">Resultat </label>
+			<div class="col col-md-10">
+				<span id="result" class="form-control"></span>
 
-        <p class="hidden" id="progress-counter" value="">0</p>*@
+			</div>
+		</div>
 
-    </div>
+	</div>
 
 }
-@*<script>
-    $(document).ready(function () {
-        //$("#start-message").fadeIn(5000);
-        //$("#start-message").delay(2000).fadeOut(5000);
-        updateProgress();
-    });
-
-
-    function updateProgress() {
-        var barelem = document.getElementById("my-progress-bar");
-        var counterelem = document.getElementById("progress-counter");
-        var counter = 0;
-        var id = setInterval(frame, 1000);
-        function frame() {
-            counter = counterelem.innerText;
-            if (counter == 110) {
-                clearInterval(id);
-            }
-            else {
-                barelem.style.width = counter + '%';
-            }
-        }
-    }
-</script>*@

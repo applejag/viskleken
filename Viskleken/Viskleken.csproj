@@ -202,6 +202,7 @@
     <Content Include="Views\Languages\Edit.cshtml" />
     <Content Include="Views\Languages\Index.cshtml" />
     <Content Include="Views\Languages\SelectLanguage.cshtml" />
+    <Content Include="Views\Languages\_LanguageTablePartial.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
