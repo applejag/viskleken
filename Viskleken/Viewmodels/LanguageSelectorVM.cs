@@ -22,7 +22,7 @@ namespace Viskleken.Viewmodels
         [Display(Name = "Språk")]
 		[Required(ErrorMessage = "Var god ange minst ett språk.")]
 		[MinLength(1, ErrorMessage = "Var god ange minst ett språk.")]
-        public IEnumerable<string> SelectedLanguages { get; set; } = new List<string>();
+        public string[] SelectedLanguages { get; set; } = new string[0];
 		
 	    public List<Language> AllLanguages { get; set; }
 

@@ -1,35 +1,30 @@
 ♥timeoutstep = 100
-♥notranslation = false
 ♥languageCodes = ⊂new string[0]⊃
 ♥languageUrls = ⊂new string[0]⊃
 ♥languageNames = ⊂new string[0]⊃ 
-ie.open url ‴https://translate.google.se/‴
-keyboard ⋘WIN+UP⋙
--ie.open url ‴http://localhost:54553‴
 
-➜screensearch
+➜filesearch
 timeout.reset value 99999999
-file.exists filename ‴♥appdata\Bitoreq AB\Viskleken\File.txt‴ timeout 99999999 errorjump ➜screensearch
+file.exists filename ‴♥appdata\Bitoreq AB\Viskleken\File.txt‴ timeout 99999999 errorjump ➜filesearch
 delay milliseconds 100
 file.delete filename ‴♥appdata\Bitoreq AB\Viskleken\File.txt‴
 
-window title ‴✱Viskleken✱‴ style ‴maximize‴
+window title ‴✱Viskleken - Internet Explorer✱‴ style ‴maximize‴
 ie.attach phrase ‴Viskleken‴
+jump ➤readLanguages
+jump ➤generateUrls
+jump ➤translate
 
-ie.getattribute name ‴value‴ search ‴SelectedLanguageId‴ by ‴Id‴ result selectedLanguages
-ie.getattribute name ‴value‴ search ‴Phrase‴ result phrase
-clipboard text ♥phrase
-ie.getattribute name ‴value‴ search ‴Email‴ result email
+jump  ➜filesearch
 
-➜opentranslate
-window title ‴✱Google✱‴ errorjump ➤startbrowser
-ie.attach ‴Google Översätt‴
+--(( PROCEDURES ))--
 
-keyboard ‴ ‴⋘CTRL+A BS⋙
+procedure ➤readLanguages    
+    ie.getattribute name ‴value‴ search ‴Phrase‴ result phrase
+    ie.getattribute name ‴value‴ search ‴Email‴ result email
 
-procedure ➤readLanguages
     ie.runscript script ‴$("input[name='SelectedLanguages']").toArray().map(function(e){return e.value}).join("|")‴ result languageCodesString
-ie.runscript script ‴$("input[name='SelectedLanguageNames']").toArray().map(function(e){return e.value}).join("|")‴ result languageNamesString
+    ie.runscript script ‴$("input[name='SelectedLanguageNames']").toArray().map(function(e){return e.value}).join("|")‴ result languageNamesString
 
     ♥languageCodes = ⊂♥languageCodesString.Split('|')⊃
     ♥languageNames = ⊂♥languageNamesString.Split('|')⊃
@@ -44,85 +39,75 @@ procedure ➤generateUrls
     jump label ➜urlsloop if ♥i<♥languageUrls⟦count⟧
 end
 
-
-jump  ➜screensearch
-
-procedure ➤newlanguage languageUrls
-    ♥iteration = 1
+procedure ➤translate
     ♥finalphrase = ⊂new string[♥languageCodes⟦count⟧]⊃
+    ♥finalphrase⟦1⟧ = ♥phrase
 
-    ➜languageloop
+    jump ➤startbrowser
+    ie.attach ‴Google Översätt‴
+
+    keyboard ⋘CTRL+A BS⋙
+
+    ♥iteration = 0
     ➜seturl
+    ➜languageloop
+        ♥iteration = ♥iteration + 1
 
-    ie.seturl url ♥languageUrls⟦♥iteration⟧
+        ie.seturl url ♥languageUrls⟦♥iteration⟧
 
-    keyboard ⋘CTRL+V⋙ 
+        -clipboard text ♥phrase
+        -keyboard ⋘CTRL+V⋙
+        keyboard ♥finalphrase⟦♥iteration⟧
 
-    delay seconds 2
+        delay seconds 2
 
+        ie.getattribute name ‴value‴ by ‴id‴ search ‴source‴ result source
+        delay seconds 2
+        ie.runscript script ‴document.getElementById("result_box").innerText‴ result resultbox
 
-    ie.getattribute name ‴value‴ by ‴id‴ search ‴source‴ result source
-    delay seconds 2
-    ie.runscript script ‴document.getElementById("result_box").innerHTML‴ result resultbox
-    ♥resultbox = ⊂♥resultbox.Replace("<span>", "").Replace("</span>", "")⊃
+        jump ➜cannottranslate if ♥source==♥resultbox
 
-    jump ➜cannottranslate if ⊂♥source == ♥resultbox⊃
-
-
-    ie.click ‴gt-swap‴
-    keyboard ‴ ‴⋘CTRL+A⋙⋘CTRL+C⋙⋘RIGHT⋙
-    ♥finalphrase⟦♥iteration⟧ = ♥clipboard
-
-    ♥iteration = ♥iteration + 1
-    jump ➜languageloop if ⊂♥iteration < 7⊃
+        -ie.click ‴gt-swap‴
+        -keyboard ⋘CTRL+A⋙⋘CTRL+C⋙⋘RIGHT⋙
+        ♥finalphrase⟦♥iteration + 1⟧ = ♥resultbox
+    jump ➜languageloop if ♥iteration<♥languageUrls⟦count⟧
 
     jump ➜result
 
     ➜cannottranslate
-    ♥notranslation = true
-    ♥finalphrase⟦6⟧ = ‴Google översätt kan inte översätta frasen‴
+    ♥finalphrase⟦♥finalphrase⟦count⟧⟧ = ‴Google översätt kan inte översätta frasen‴
 
     ➜result
-    window title ‴✱Viskleken✱‴
+    window title ‴✱Viskleken - Internet Explorer✱‴
     ie.attach phrase ‴Viskleken‴
-    ie.setattribute name ‴innerHTML‴ value ♥finalphrase⟦6⟧ search ‴result‴
+    ie.runscript script ‴$(result).text("♥finalphrase⟦♥finalphrase⟦count⟧⟧")‴
     ie.runscript script ‴$(result).css("visibility", "visible")‴
 
-    ♥iteration = 1
     ♥emailbody = ⊂"Startfras:\t\t" + ♥phrase + "\n\n"⊃
 
-    jump ➜shortemail if ⊂♥notranslation == true⊃
-
+    ♥iteration = 0
     ➜emailconstruction
-
-    ♥emailbody = ⊂♥emailbody + ♥languages⟦♥iteration⟧ + ":\t\t" + ♥finalphrase⟦♥iteration⟧ + "\n"⊃
-
-    ♥iteration = ♥iteration + 1
-    jump ➜emailconstruction if ⊂♥iteration < 6⊃
-
-    ♥emailbody = ⊂♥emailbody + "\n" + ♥languages⟦♥iteration⟧ + ":\t\t" + ♥finalphrase⟦♥iteration⟧⊃
-
-    jump ➜sendemail if ⊂♥notranslation == false⊃
-
-    ➜shortemail
-    ♥emailbody = ⊂♥emailbody + "Resultat:\t\t" + ♥finalphrase⟦6⟧⊃
+        ♥iteration = ♥iteration + 1
+        jump ➜sendemail if  ⊂string.IsNullOrEmpty(♥finalphrase⟦♥iteration⟧)⊃
+        ♥emailbody = ⊂♥emailbody + ♥languageNames⟦♥iteration⟧ + ":\t\t" + ♥finalphrase⟦♥iteration⟧ + "\n"⊃
+    jump ➜emailconstruction if ♥iteration<♥finalphrase⟦count⟧
 
     ➜sendemail
+    ♥emailbody = ⊂♥emailbody + "\nResultat:\t\t" + ♥finalphrase⟦♥finalphrase⟦count⟧⟧⊃
 
     mail.smtp login ‴viskroboten@gmail.com‴ password ‴DemoDagen‴ from ‴viskroboten@gmail.com‴ to ♥email subject ‴Viskleken‴ body ⊂♥emailbody⊃ errorjump ➜emaildone
 
     ➜emaildone
 
-    -♥progress = 0
-    -➜progressloop
-    -♥progress =♥progress + 10
-    -delay 1
-    -ie.setattribute name ‴innerHTML‴ value ♥progress search ‴progress-counter‴
-    -jump ➜progressloop if ⊂♥progress < 101⊃
-
 end
 
 procedure ➤startbrowser
-ie.open url ‴https://translate.google.se/‴
-jump ➜opentranslate
+    window title ‴✱Google✱‴ errorjump ➜startbrowserfail
+    jump ➜startbrowsersuccess
+
+    ➜startbrowserfail
+    ie.open url ‴https://translate.google.se/‴
+    window title ‴✱Google✱‴ errorjump ➜startbrowserfail
+
+    ➜startbrowsersuccess
 end

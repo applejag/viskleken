@@ -200,11 +200,6 @@
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
-    <Content Include="Views\Languages\Create.cshtml" />
-    <Content Include="Views\Languages\Delete.cshtml" />
-    <Content Include="Views\Languages\Details.cshtml" />
-    <Content Include="Views\Languages\Edit.cshtml" />
-    <Content Include="Views\Languages\Index.cshtml" />
     <Content Include="Views\Languages\SelectLanguage.cshtml" />
     <Content Include="Views\Languages\_LanguageTablePartial.cshtml" />
   </ItemGroup>

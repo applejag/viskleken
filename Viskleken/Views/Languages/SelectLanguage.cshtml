@@ -83,6 +83,13 @@
                 </div>
 			</div>
 
+				<div class="row">
+					<div class="form-group">
+						<div class="col col-md-offset-2 col-md-6">
+							<input type="submit" value="Viska!" class="btn btn-success" id="whisper-btn" />
+						</div>
+					</div>
+				</div>
 			@if (Model.StageInProcess == 2)
 			{
 				<div class="row">
@@ -90,16 +97,6 @@
 						<div>@Html.ActionLink("Nollställ", "SelectLanguage", null, new { @class = "btn btn-danger" })</div>
 					</div>
 					<p class="col col-md-offset-2 col-md-10" id="start-message">@Model.StartMessage</p>
-				</div>
-			}
-			else
-			{
-				<div class="row">
-					<div class="form-group">
-						<div class="col col-md-offset-2 col-md-6">
-							<input type="submit" value="Viska!" class="btn btn-success" id="whisper-btn" />
-						</div>
-					</div>
 				</div>
 			}
 		</div>
