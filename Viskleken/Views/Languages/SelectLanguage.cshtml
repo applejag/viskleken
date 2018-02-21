@@ -1,6 +1,10 @@
 ﻿@using Viskleken.Models
 @model Viskleken.Viewmodels.LanguageSelectorVM
 
+@{ 
+    var swedish = Model.AllLanguages.First(e => e.Code == "sv");
+}
+
 @section scripts
 {
 	<script type="text/javascript">
@@ -19,7 +23,7 @@
 
 		function addLanguage(lang, code) {
 			$('<div class="input-group" style="margin-bottom: 0.5em">' +
-				'<input class="form-control" type="text" value="'+lang+'" readonly="readonly" />' +
+				'<input class="form-control" name="SelectedLanguageNames" type="text" value="'+lang+'" readonly="readonly" />' +
 				'<button class="input-group-addon btn btn-danger" onclick="$(this).parent().remove()" type="button">Ta bort</button>' +
 				'<input type="hidden" name="@nameof(Model.SelectedLanguages)" value="' + (code || '') + '">' +
 			'</div>').appendTo($('#selectedLanguages'));
@@ -57,13 +61,26 @@
 
 			<div class="form-group">
 				@Html.LabelFor(model => model.SelectedLanguages, htmlAttributes: new { @class = "control-label col-md-2"})
-				<div class="col col-md-10">
-					<div id="selectedLanguages"></div>
-					<a href="#" class="btn btn-success" data-toggle="popover" data-placement="bottom"
-					   title="Lägg till språk" data-html="true" data-trigger="focus"
-					   data-content="@Html.Partial("_LanguageTablePartial", Model.AllLanguages).ToHtmlString()">Lägg till språk</a>
-					@Html.ValidationMessageFor(model => model.SelectedLanguages, "", new { @class = "text-danger" })
-				</div>
+                <div class="col col-md-10">
+                    @* SWEDISH PREPEND *@
+                    <div class="input-group" style="display:none;">
+                        <input class="form-control" name="SelectedLanguageNames" type="text" value="@swedish.Name" readonly="readonly" />
+                        <input type="hidden" name="@nameof(Model.SelectedLanguages)" value="@swedish.Code" disabled="disabled">
+                    </div>
+                    @* USER SELECTED LANGUAGES *@
+                    <div id="selectedLanguages">
+                    </div>
+                    @* SWEDISH APPEND *@
+                    <div class="input-group" style="display:none;">
+                        <input class="form-control" name="SelectedLanguageNames" type="text" value="@swedish.Name" readonly="readonly" />
+                        <input type="hidden" name="@nameof(Model.SelectedLanguages)" value="@swedish.Code" disabled="disabled">
+                    </div>
+
+                    <a href="#" class="btn btn-success" data-toggle="popover" data-placement="bottom"
+                       title="Lägg till språk" data-html="true" data-trigger="focus"
+                       data-content="@Html.Partial("_LanguageTablePartial", Model.AllLanguages).ToHtmlString()">Lägg till språk</a>
+                    @Html.ValidationMessageFor(model => model.SelectedLanguages, "", new { @class = "text-danger" })
+                </div>
 			</div>
 
 			@if (Model.StageInProcess == 2)
