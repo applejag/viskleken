@@ -102,12 +102,12 @@ procedure ➤translate
 end
 
 procedure ➤startbrowser
-    window title ‴✱Google✱‴ errorjump ➜startbrowserfail
+    window title ‴✱Google Översätt - Internet Explorer✱‴ errorjump ➜startbrowserfail
     jump ➜startbrowsersuccess
 
     ➜startbrowserfail
     ie.open url ‴https://translate.google.se/‴
-    window title ‴✱Google✱‴ errorjump ➜startbrowserfail
+    window title ‴✱Google Översätt - Internet Explorer✱‴ errorjump ➜startbrowserfail
 
     ➜startbrowsersuccess
 end
