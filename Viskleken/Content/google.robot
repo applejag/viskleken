@@ -65,7 +65,7 @@ procedure ➤translate
         delay seconds 2
         ie.runscript script ‴document.getElementById("result_box").innerText‴ result resultbox
 
-        jump ➜cannottranslate if ♥source==♥resultbox
+        jump ➜cannottranslate if ⊂♥source==♥resultbox⊃
 
         -ie.click ‴gt-swap‴
         -keyboard ⋘CTRL+A⋙⋘CTRL+C⋙⋘RIGHT⋙
