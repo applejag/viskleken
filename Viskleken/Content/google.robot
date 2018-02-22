@@ -3,6 +3,8 @@
 ♥languageUrls = ⊂new string[0]⊃
 ♥languageNames = ⊂new string[0]⊃ 
 
+file.delete filename ‴♥appdata\Bitoreq AB\Viskleken\File.txt‴
+
 ➜filesearch
 timeout.reset value 99999999
 file.exists filename ‴♥appdata\Bitoreq AB\Viskleken\File.txt‴ timeout 99999999 errorjump ➜filesearch
