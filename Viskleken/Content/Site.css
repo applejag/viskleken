@@ -132,3 +132,7 @@ body {
 	width: auto;
 	max-width: none;
 }
+
+.tiny {
+	font-size: 70%;
+}
