@@ -3,29 +3,36 @@
 <head>
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>@ViewBag.Title - Viskleken</title>
+	<title>Viskleken</title>
 	@Styles.Render("~/Content/css")
 	@Scripts.Render("~/bundles/modernizr")
 	<link href="https://fonts.googleapis.com/css?family=Freckle+Face" rel="stylesheet">
 </head>
 <body>
-	<div class="navbar navbar-inverse navbar-fixed-top">
-		<div class="container">
-			<div class="navbar-header">
-				<div>
-					<img id="logo" src="~/Content/Big_blue_black.png" />
+
+
+<div class="container body-content">
+	
+	<header>
+		<div class="row">
+			<div style="margin-left: -15px; margin-right: -15px;">
+			<div class="control-label col-md-2">
+				<img id="logo" src="@Url.Content("~/Content/Big_blue_black.png")" alt="Bitoreq company logo" class="img-responsive" style="padding: 0.3em;"/>
+			</div>
+				<div class="col-md-10 page-header">
+					@ViewData["Header"]
 				</div>
 			</div>
-			<div class="navbar-collapse collapse">
-			</div>
 		</div>
-	</div>
-	<div class="container body-content">
-		@RenderBody()
-	</div>
+	</header>
 
-	@Scripts.Render("~/bundles/jquery")
-	@Scripts.Render("~/bundles/bootstrap")
-	@RenderSection("scripts", required: false)
+	<article>
+		@RenderBody()
+	</article>
+</div>
+
+@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/bundles/bootstrap")
+@RenderSection("scripts", required: false)
 </body>
 </html>

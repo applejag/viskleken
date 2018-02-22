@@ -39,19 +39,44 @@
 
 				clone.appendTo($('#selectedLanguages'));
 			}
+
+			function setProgress(percent, comment) {
+				var units = Math.min(Math.max(percent * 100, 0), 100);
+				var text = Math.round(units) + '%';
+
+				if (comment) text += ' - ' + comment;
+
+				var bar = $('#progressbar').removeClass('invisible').find('.progress-bar');
+
+				bar.text(text)
+					.attr('aria-valuenow', units)
+					.css('width', units + '%');
+
+			}
+
+			function hideProgress() {
+				setProgress(0);
+				$('#progressbar').addClass('invisible');
+			}
 		</script>
 	}
 
 	@Html.AntiForgeryToken()
 
 	<div class="row">
-		<p class="col col-md-2"></p>
-		<p class="page-header col col-md-5">@Model.Heading</p>
-	</div>
-
-	<div class="row">
 		<div class="form-horizontal">
 			@Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+			<div class="form-group invisible h2" id="progressbar">
+				<div class="progress progress-big">
+					<div class="progress-bar progress-bar-info progress-bar-striped active massive-font"
+						 role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"
+						 style="width: 0%">
+						0%
+					</div>
+				</div>
+			</div>
+
 			<div class="form-group">
 				@Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "control-label col-md-2" })
 				<div class="col-md-10">
@@ -79,19 +104,19 @@
 					</div>
 					@* USER SELECTED LANGUAGES *@
 					<div id="selectedLanguages">
-                        <div id="selectedLanguageTemplate" class="input-group ui-state-default" style="margin-bottom: 0.5em; display: none;">
-                            <span class="input-group-addon">
-                                <span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
-                            </span>
-                            <span class="form-control">
-                                <span data-name="selectedLanguageName"></span>
-                                <i class="tiny text-muted"> - <span data-name="selectedLanguageCode"></span></i>
-                            </span>
+						<div id="selectedLanguageTemplate" class="input-group ui-state-default" style="margin-bottom: 0.5em; display: none;">
+							<span class="input-group-addon">
+								<span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
+							</span>
+							<span class="form-control">
+								<span data-name="selectedLanguageName"></span>
+								<i class="tiny text-muted"> - <span data-name="selectedLanguageCode"></span></i>
+							</span>
 
-                            <input name="@nameof(Model.SelectedLanguages)" type="hidden" disabled="disabled" />
-                            <input name="SelectedLanguageNames" type="hidden" disabled="disabled" />
-                            <button class="input-group-addon btn btn-danger" onclick="$(this).parent().remove()" type="button">Ta bort</button>
-                        </div>
+							<input name="@nameof(Model.SelectedLanguages)" type="hidden" disabled="disabled" />
+							<input name="SelectedLanguageNames" type="hidden" disabled="disabled" />
+							<button class="input-group-addon btn btn-danger" onclick="$(this).parent().remove()" type="button">Ta bort</button>
+						</div>
 					</div>
 					@* SWEDISH APPEND *@
 					<div class="input-group" style="display:none;">
@@ -124,10 +149,9 @@
 		</div>
 
 		<div class="row">
-			<label class="col col-md-2" id="result-label">Resultat </label>
+			<label class="col col-md-2" id="result-label">Resultat</label>
 			<div class="col col-md-10">
 				<span id="result" class="form-control"></span>
-
 			</div>
 		</div>
 

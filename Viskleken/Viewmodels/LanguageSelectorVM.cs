@@ -10,9 +10,7 @@ namespace Viskleken.Viewmodels
 {
     public class LanguageSelectorVM
     {
-        public string Heading { get; set; }
-
-        [Display(Name="E-post")]
+		[Display(Name="E-post")]
         public string Email { get; set; }
 
         [Display(Name = "Fras")]
