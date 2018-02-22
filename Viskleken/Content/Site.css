@@ -130,3 +130,7 @@ body {
 .progress-bar.massive-font {
 	padding: 15px;
 }
+
+header {
+	margin: 1em 0;
+}

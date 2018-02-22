@@ -12,18 +12,27 @@ delay milliseconds 100
 file.delete filename ‴♥appdata\Bitoreq AB\Viskleken\File.txt‴
 
 window title ‴✱Viskleken - Internet Explorer✱‴ style ‴maximize‴
-ie.attach phrase ‴Viskleken‴
+
 jump ➤readLanguages
 jump ➤generateUrls
 jump ➤translate
+jump ➤sendEmail
 
+jump ➤setProgress percent (float)1.0 comment ‴Klar!‴
+delay seconds 2
+
+jump ➤hideProgress
 jump  ➜filesearch
 
 --(( PROCEDURES ))--
 
-procedure ➤readLanguages    
+procedure ➤readLanguages
+    jump ➤setProgress percent 0.1 comment ‴Läser in fras...‴
+
     ie.getattribute name ‴value‴ search ‴Phrase‴ result phrase
     ie.getattribute name ‴value‴ search ‴Email‴ result email
+
+    jump ➤setProgress percent 0.2 comment ‴Läser in språk...‴
 
     ie.runscript script ‴$("input[name='SelectedLanguages']").toArray().map(function(e){return e.value}).filter(function(e){return e}).join("|")‴ result languageCodesString
     ie.runscript script ‴$("input[name='SelectedLanguageNames']").toArray().map(function(e){return e.value}).filter(function(e){return e}).join("|")‴ result languageNamesString
@@ -33,6 +42,8 @@ procedure ➤readLanguages
 end
 
 procedure ➤generateUrls
+    jump ➤setProgress percent 0.25 comment  ‴Genererar URL:er...‴
+
     ♥languageUrls = ⊂new string[♥languageCodes⟦count⟧ - 1]⊃
     ♥i=0 
     ➜urlsloop
@@ -45,20 +56,20 @@ procedure ➤translate
     ♥finalphrase = ⊂new string[♥languageCodes⟦count⟧]⊃
     ♥finalphrase⟦1⟧ = ♥phrase
 
-    jump ➤startbrowser
-    ie.attach ‴Google Översätt‴
-
-    keyboard ⋘CTRL+A BS⋙
-
     ♥iteration = 0
-    ➜seturl
+    
+    jump ➤setProgress percent 0.28 comment  ‴Öppnar Google Translate...‴
+    jump ➤startbrowser
+
     ➜languageloop
         ♥iteration = ♥iteration + 1
 
+        -- PROGRESS 0.3 -> 0.75
+        jump ➤setProgress percent  ⊂0.3f+0.45f*♥iteration/♥languageUrls⟦count⟧⊃ comment  ‴Översätter till ♥languageNames⟦♥iteration+1⟧...‴
+
+        ie.attach phrase ‴Google Översätt‴
         ie.seturl url ♥languageUrls⟦♥iteration⟧
 
-        -clipboard text ♥phrase
-        -keyboard ⋘CTRL+V⋙
         keyboard ♥finalphrase⟦♥iteration⟧
 
         delay seconds 2
@@ -80,11 +91,17 @@ procedure ➤translate
     ♥finalphrase⟦♥finalphrase⟦count⟧⟧ = ‴Google översätt kan inte översätta frasen‴
 
     ➜result
+    ie.close
+    jump ➤setProgress percent 0.8 comment  ‴Översättning klar.‴
+
     window title ‴✱Viskleken - Internet Explorer✱‴
     ie.attach phrase ‴Viskleken‴
     ie.runscript script ‴$(result).text("♥finalphrase⟦♥finalphrase⟦count⟧⟧")‴
     ie.runscript script ‴$(result).css("visibility", "visible")‴
+end
 
+procedure ➤sendEmail
+    jump ➤setProgress percent 0.85 comment ‴Konstruerar e-mail...‴
     ♥emailbody = ⊂"Startfras:\t\t" + ♥phrase + "\n\n"⊃
 
     ♥iteration = 0
@@ -97,10 +114,10 @@ procedure ➤translate
     ➜sendemail
     ♥emailbody = ⊂♥emailbody + "\nResultat:\t\t" + ♥finalphrase⟦♥finalphrase⟦count⟧⟧⊃
 
+    jump ➤setProgress percent 0.9 comment ‴Skickar e-mail...‴
     mail.smtp login ‴viskroboten@gmail.com‴ password ‴DemoDagen‴ from ‴viskroboten@gmail.com‴ to ♥email subject ‴Viskleken‴ body ⊂♥emailbody⊃ errorjump ➜emaildone
 
     ➜emaildone
-
 end
 
 procedure ➤startbrowser
@@ -112,4 +129,14 @@ procedure ➤startbrowser
     window title ‴✱Google Översätt - Internet Explorer✱‴ errorjump ➜startbrowserfail
 
     ➜startbrowsersuccess
+end
+
+procedure ➤setProgress percent (float)0.0 comment ‴‴
+    ie.attach ‴Viskleken‴
+    ie.runscript script ‴setProgress(♥percent, "♥comment")‴
+end
+
+procedure ➤hideProgress
+    ie.attach ‴Viskleken‴
+    ie.runscript ‴hideProgress()‴
 end
