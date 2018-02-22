@@ -1,38 +1,47 @@
 ﻿@using Viskleken.Models
 @model Viskleken.Viewmodels.LanguageSelectorVM
 
-@{ 
-    var swedish = Model.AllLanguages.First(e => e.Code == "sv");
-}
-
-@section scripts
-{
-	<script type="text/javascript">
-		$(function() {
-			$('[data-toggle="popover"]').popover();
-
-			@foreach (string selectListItem in Model.SelectedLanguages)
-			{
-				Language language = Model.AllLanguages.FirstOrDefault(e => e.Code == selectListItem);
-				if (language != null)
-				{
-					@Html.Raw($"addLanguage('{language.Name}', '{language.Code}');")
-				}
-			}
-		});
-
-		function addLanguage(lang, code) {
-			$('<div class="input-group" style="margin-bottom: 0.5em">' +
-				'<input class="form-control" name="SelectedLanguageNames" type="text" value="'+lang+'" readonly="readonly" />' +
-				'<button class="input-group-addon btn btn-danger" onclick="$(this).parent().remove()" type="button">Ta bort</button>' +
-				'<input type="hidden" name="@nameof(Model.SelectedLanguages)" value="' + (code || '') + '">' +
-			'</div>').appendTo($('#selectedLanguages'));
-		}
-	</script>
+@{
+	var swedish = Model.AllLanguages.First(e => e.Code == "sv");
 }
 
 @using (Html.BeginForm())
 {
+	@section scripts
+	{
+		@Scripts.Render("~/bundles/jqueryval");
+
+		<script type="text/javascript">
+			$(function() {
+				$('[data-toggle="popover"]').popover();
+				$('#selectedLanguages').sortable();
+
+				@foreach (string selectListItem in Model.SelectedLanguages)
+				{
+					Language language = Model.AllLanguages.FirstOrDefault(e => e.Code == selectListItem);
+					if (language != null)
+					{
+						@Html.Raw($"addLanguage('{language.Name}', '{language.Code}');")
+					}
+				}
+			});
+
+			function addLanguage(lang, code) {
+				var clone = $('#selectedLanguageTemplate').clone()
+					.removeAttr('id')
+					.show()
+					.disableSelection();
+
+				clone.find('[data-name="selectedLanguageName"]').text(lang);
+				clone.find('[data-name="selectedLanguageCode"]').text(code);
+				clone.find('input[name="SelectedLanguages"]').val(code).removeAttr('disabled');
+				clone.find('input[name="SelectedLanguageNames"]').val(lang);
+
+				clone.appendTo($('#selectedLanguages'));
+			}
+		</script>
+	}
+
 	@Html.AntiForgeryToken()
 
 	<div class="row">
@@ -60,36 +69,49 @@
 			</div>
 
 			<div class="form-group">
-				@Html.LabelFor(model => model.SelectedLanguages, htmlAttributes: new { @class = "control-label col-md-2"})
-                <div class="col col-md-10">
-                    @* SWEDISH PREPEND *@
-                    <div class="input-group" style="display:none;">
-                        <input class="form-control" name="SelectedLanguageNames" type="text" value="@swedish.Name" readonly="readonly" />
-                        <input type="hidden" name="@nameof(Model.SelectedLanguages)" value="@swedish.Code" disabled="disabled">
-                    </div>
-                    @* USER SELECTED LANGUAGES *@
-                    <div id="selectedLanguages">
-                    </div>
-                    @* SWEDISH APPEND *@
-                    <div class="input-group" style="display:none;">
-                        <input class="form-control" name="SelectedLanguageNames" type="text" value="@swedish.Name" readonly="readonly" />
-                        <input type="hidden" name="@nameof(Model.SelectedLanguages)" value="@swedish.Code" disabled="disabled">
-                    </div>
+				@Html.LabelFor(model => model.SelectedLanguages, htmlAttributes: new { @class = "control-label col-md-2" })
+				<div class="col col-md-10">
+					@Html.ValidationMessageFor(model => model.SelectedLanguages, "", new { @class = "text-danger" })
+					@* SWEDISH PREPEND *@
+					<div class="input-group" style="display:none;">
+						<input class="form-control" name="SelectedLanguageNames" type="text" value="@swedish.Name" readonly="readonly" />
+						<input type="hidden" name="@nameof(Model.SelectedLanguages)" value="@swedish.Code" disabled="disabled">
+					</div>
+					@* USER SELECTED LANGUAGES *@
+					<div id="selectedLanguages">
+						<div id="selectedLanguageTemplate" class="input-group ui-state-default" style="margin-bottom: 0.5em; display: none;">
+							<span class="input-group-addon">
+								<span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
+							</span>
+							<span class="form-control">
+								<span data-name="selectedLanguageName"></span>
+								<i class="tiny text-muted"> - <span data-name="selectedLanguageCode"></span></i>
+							</span>
 
-                    <a href="#" class="btn btn-success" data-toggle="popover" data-placement="bottom"
-                       title="Lägg till språk" data-html="true" data-trigger="focus"
-                       data-content="@Html.Partial("_LanguageTablePartial", Model.AllLanguages).ToHtmlString()">Lägg till språk</a>
-                    @Html.ValidationMessageFor(model => model.SelectedLanguages, "", new { @class = "text-danger" })
-                </div>
-			</div>
-
-				<div class="row">
-					<div class="form-group">
-						<div class="col col-md-offset-2 col-md-6">
-							<input type="submit" value="Viska!" class="btn btn-success" id="whisper-btn" />
+							@Html.HiddenFor(model => model.SelectedLanguages, new { disabled = "disabled" })
+							<input name="SelectedLanguageNames" type="hidden" disabled="disabled" />
+							<button class="input-group-addon btn btn-danger" onclick="$(this).parent().remove()" type="button">Ta bort</button>
 						</div>
 					</div>
+					@* SWEDISH APPEND *@
+					<div class="input-group" style="display:none;">
+						<input class="form-control" name="SelectedLanguageNames" type="text" value="@swedish.Name" readonly="readonly" />
+						<input type="hidden" name="@nameof(Model.SelectedLanguages)" value="@swedish.Code" disabled="disabled">
+					</div>
+
+					<a href="#" class="btn btn-success" data-toggle="popover" data-placement="bottom"
+					   title="Lägg till språk" data-html="true" data-trigger="focus"
+					   data-content="@Html.Partial("_LanguageTablePartial", Model.AllLanguages).ToHtmlString()">Lägg till språk</a>
 				</div>
+			</div>
+
+			<div class="row">
+				<div class="form-group">
+					<div class="col col-md-offset-2 col-md-6">
+						<input type="submit" value="Viska!" class="btn btn-success" id="whisper-btn" />
+					</div>
+				</div>
+			</div>
 			@if (Model.StageInProcess == 2)
 			{
 				<div class="row">
