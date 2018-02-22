@@ -23,8 +23,8 @@ procedure ➤readLanguages
     ie.getattribute name ‴value‴ search ‴Phrase‴ result phrase
     ie.getattribute name ‴value‴ search ‴Email‴ result email
 
-    ie.runscript script ‴$("input[name='SelectedLanguages']").toArray().map(function(e){return e.value}).join("|")‴ result languageCodesString
-    ie.runscript script ‴$("input[name='SelectedLanguageNames']").toArray().map(function(e){return e.value}).join("|")‴ result languageNamesString
+    ie.runscript script ‴$("input[name='SelectedLanguages']").toArray().map(function(e){return e.value}).filter(function(e){return e}).join("|")‴ result languageCodesString
+    ie.runscript script ‴$("input[name='SelectedLanguageNames']").toArray().map(function(e){return e.value}).filter(function(e){return e}).join("|")‴ result languageNamesString
 
     ♥languageCodes = ⊂♥languageCodesString.Split('|')⊃
     ♥languageNames = ⊂♥languageNamesString.Split('|')⊃

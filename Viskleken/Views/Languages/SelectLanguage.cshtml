@@ -79,19 +79,19 @@
 					</div>
 					@* USER SELECTED LANGUAGES *@
 					<div id="selectedLanguages">
-						<div id="selectedLanguageTemplate" class="input-group ui-state-default" style="margin-bottom: 0.5em; display: none;">
-							<span class="input-group-addon">
-								<span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
-							</span>
-							<span class="form-control">
-								<span data-name="selectedLanguageName"></span>
-								<i class="tiny text-muted"> - <span data-name="selectedLanguageCode"></span></i>
-							</span>
+                        <div id="selectedLanguageTemplate" class="input-group ui-state-default" style="margin-bottom: 0.5em; display: none;">
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
+                            </span>
+                            <span class="form-control">
+                                <span data-name="selectedLanguageName"></span>
+                                <i class="tiny text-muted"> - <span data-name="selectedLanguageCode"></span></i>
+                            </span>
 
-							@Html.HiddenFor(model => model.SelectedLanguages, new { disabled = "disabled" })
-							<input name="SelectedLanguageNames" type="hidden" disabled="disabled" />
-							<button class="input-group-addon btn btn-danger" onclick="$(this).parent().remove()" type="button">Ta bort</button>
-						</div>
+                            <input name="@nameof(Model.SelectedLanguages)" type="hidden" disabled="disabled" />
+                            <input name="SelectedLanguageNames" type="hidden" disabled="disabled" />
+                            <button class="input-group-addon btn btn-danger" onclick="$(this).parent().remove()" type="button">Ta bort</button>
+                        </div>
 					</div>
 					@* SWEDISH APPEND *@
 					<div class="input-group" style="display:none;">
