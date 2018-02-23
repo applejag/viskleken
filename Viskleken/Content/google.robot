@@ -85,17 +85,21 @@ procedure ➤translate
     ie.runscript script ‴$(result).text("♥finalphrase⟦♥finalphrase⟦count⟧⟧")‴
     ie.runscript script ‴$(result).css("visibility", "visible")‴
 
-    ♥emailbody = ⊂"Startfras:\t\t" + ♥phrase + "\n\n"⊃
+    -♥emailbody = ⊂"Startfras:\t\t" + ♥phrase + "\n\n"⊃
+    ♥emailbody = ⊂"Startfras: ".PadRight(32) + ♥phrase + "\n\n"⊃
 
     ♥iteration = 0
     ➜emailconstruction
         ♥iteration = ♥iteration + 1
         jump ➜sendemail if  ⊂string.IsNullOrEmpty(♥finalphrase⟦♥iteration⟧)⊃
-        ♥emailbody = ⊂♥emailbody + ♥languageNames⟦♥iteration⟧ + ":\t\t" + ♥finalphrase⟦♥iteration⟧ + "\n"⊃
+        -♥emailbody = ⊂♥emailbody + ♥languageNames⟦♥iteration⟧ + ":\t\t" + ♥finalphrase⟦♥iteration⟧ + "\n"⊃
+        ♥languageName = ♥languageNames⟦♥iteration⟧ + ": "
+        ♥emailbody = ⊂♥emailbody + ♥languageName.PadRight(32) + ♥finalphrase⟦♥iteration⟧ + "\n"⊃
     jump ➜emailconstruction if ♥iteration<♥finalphrase⟦count⟧
 
     ➜sendemail
-    ♥emailbody = ⊂♥emailbody + "\nResultat:\t\t" + ♥finalphrase⟦♥finalphrase⟦count⟧⟧⊃
+    -♥emailbody = ⊂♥emailbody + "\nResultat:\t\t" + ♥finalphrase⟦♥finalphrase⟦count⟧⟧⊃
+    ♥emailbody = ⊂♥emailbody + "\n" + "Resultat: ".PadRight(32) + ♥finalphrase⟦♥finalphrase⟦count⟧⟧⊃
 
     mail.smtp login ‴viskroboten@gmail.com‴ password ‴DemoDagen‴ from ‴viskroboten@gmail.com‴ to ♥email subject ‴Viskleken‴ body ⊂♥emailbody⊃ errorjump ➜emaildone
 
