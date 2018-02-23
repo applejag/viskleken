@@ -19,9 +19,10 @@ namespace Viskleken.Controllers
         // GET: Languages/Select
         public async Task<ActionResult> SelectLanguage()
         {
+	        ViewData["Header"] = "Viskleken";
+
 	        var languageSelectorVM = new LanguageSelectorVM
 	        {
-		        Heading = "Viskleken",
 		        StageInProcess = 1,
 				AllLanguages = await db.LanguageCodes.ToListAsync(),
 			};
@@ -41,9 +42,6 @@ namespace Viskleken.Controllers
 			if (ModelState.IsValid)
             {   
                 model.StageInProcess = 2;
-
-                //string builder = "";
-                //System.IO.File.WriteAllText("C:\\Users\\paulh\\OneDrive\\Documents\\Bitoreq AB\\APL\\Viskleken\\File.txt", builder);
 
                 string path = Environment.ExpandEnvironmentVariables("%appdata%\\Bitoreq AB\\Viskleken");
                 System.IO.Directory.CreateDirectory(path);
