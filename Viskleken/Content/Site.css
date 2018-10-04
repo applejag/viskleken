@@ -58,6 +58,15 @@ textarea {
     border-radius: 5px;
 }
 
+#result1-label {
+    font-family: 'Freckle Face';
+    font-size: 42px;
+    text-align: left;
+    background-color: #ffffff;
+    
+}
+
+
 #result {
     font-family: 'Freckle Face';
     font-size: 40px;
@@ -106,7 +115,10 @@ textarea {
 }
 
 body {
-    background: url("whispers.jpg") no-repeat;
+    background: url("whispers.jpg");
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: center;
     background-size: 100%;
 }
 

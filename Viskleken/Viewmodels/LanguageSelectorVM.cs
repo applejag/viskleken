@@ -5,8 +5,9 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using Viskleken.Models;
-
+using System.Speech.Synthesis;
 namespace Viskleken.Viewmodels
+    
 {
     public class LanguageSelectorVM
     {
@@ -23,11 +24,11 @@ namespace Viskleken.Viewmodels
         public string[] SelectedLanguages { get; set; } = new string[0];
 		
 	    public List<Language> AllLanguages { get; set; }
-
-		public string StartMessage { get; set; }
-
+        public Dictionary<string,string> TranslatedTexts { get; set; }
+        public string StartMessage { get; set; }
+        
         public int StageInProcess { get; set; }
-
+       
         public LanguageSelectorVM()
         {
             StartMessage = "ViskROBOTEN startar";
